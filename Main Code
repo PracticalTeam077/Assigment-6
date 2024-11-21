@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Define the student structure
+typedef struct
+{
+    int studentID;
+    char name[100];
+    double marks;
+} Student;
+
+// Function to input student data
+void inputStudentData(Student students[], int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        printf("Enter details for Student %d:\n", i + 1);
+        printf("Student ID: ");
+        while (scanf("%d", &students[i].studentID) != 1)
+        {
+            printf("Invalid input. Please enter a valid Student ID: ");
+            while (getchar() != '\n')
+                ; // Clear invalid input
+        }
+
+        printf("Name: ");
+        getchar(); // To consume the newline left by previous input
+        fgets(students[i].name, sizeof(students[i].name), stdin);
+        students[i].name[strcspn(students[i].name, "\n")] = '\0'; // Remove the newline
+
+        printf("Marks: ");
+        while (scanf("%lf", &students[i].marks) != 1)
+        {
+            printf("Invalid input. Please enter valid marks: ");
+            while (getchar() != '\n')
+                ; // Clear invalid input
+        }
+    }
+}
+
+// Function to sort students by marks and by name (in case of tie)
+void sortStudents(Student students[], int n)
+{
+    Student temp;
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int j = 0; j < n - i - 1; j++)
+        {
+            // Sort by marks (desc) and if equal, by name (asc)
+            if (students[j].marks < students[j + 1].marks ||
+                (students[j].marks == students[j + 1].marks && strcmp(students[j].name, students[j + 1].name) > 0))
+            {
+                // Swap the students
+                temp = students[j];
+                students[j] = students[j + 1];
+                students[j + 1] = temp;
+            }
+        }
+    }
+}
+
+// Function to display the student information
+void displayStudents(Student students[], int n)
+{
+    printf("\nStudent ID\tName\t\t\tMarks\n");
+    printf("--------------------------------------------\n");
+    for (int i = 0; i < n; i++)
+    {
+        printf("%d\t\t%s\t\t%.2f\n", students[i].studentID, students[i].name, students[i].marks);
+    }
+}
+
+int main()
+{
+    int n;
+
+    // Input the number of students
+    printf("Enter the number of students: ");
+    while (scanf("%d", &n) != 1 || n <= 0)
+    {
+        printf("Invalid input. Please enter a valid number of students: ");
+        while (getchar() != '\n')
+            ; // Clear invalid input
+    }
+
+    // Declare a static array to store student data
+    Student students[n];
+
+    // Input the student data
+    inputStudentData(students, n);
+
+    // Sort the students by marks (highest to lowest)
+    sortStudents(students, n);
+
+    // Display the sorted student details
+    displayStudents(students, n);
+
+    return 0;
+}
